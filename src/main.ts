@@ -46,6 +46,9 @@ async function run(): Promise<void> {
         map(creds => {
           core.info('Retrieved AWS JIT credentials')
 
+          // Output the account ID
+          core.setOutput('aws-account-id', features.DefaultAwsAccount)
+
           // Mark all secrets so they don't show up in github logs
           core.setSecret(creds.AccessKeyId)
           core.setSecret(creds.SecretAccessKey)
