@@ -27,3 +27,4 @@ jobs:
         with:
           tenant: ${{ env.duplo_tenant_id }}
           admin: false
+      - run: aws sts get-caller-identity
