@@ -1,10 +1,10 @@
 <p align="center">
-  <a href="https://github.com/duplocloud/ghactions-service-update/actions"><img alt="ghactions-service-update status" src="https://github.com/duplocloud/ghactions-service-update/workflows/build-test/badge.svg"></a>
+  <a href="https://github.com/duplocloud/ghactions-aws-jit/actions"><img alt="ghactions-aws-jit status" src="https://github.com/duplocloud/ghactions-aws-jit/workflows/build-test/badge.svg"></a>
 </p>
 
-# Update one or more Services running in Duplo
+# Github action to get just-in-time access to AWS 
 
-This action will update one or more services running in Duplo.
+This action will retrieve just-in-time AWS credentials from Duplo
 
 # Usage
 
@@ -18,22 +18,16 @@ on:
       - develop # branch to trigger on
 jobs:
   deploy:
-    # This example updates a service named "nginx" to use an image "nginx:latest"
+    # This example get AWS credentials, then lists all S3 buckets.
     name: Deploy with DuploCloud
     runs-on: ubuntu-latest
     steps:
-      - name: service-update
-        uses: duplocloud/ghactions-service-update@master
+      - name: aws-jit
+        uses: duplocloud/ghactions-aws-jit@master
         with:
           duplo_host: https://mysystem.duplocloud.net
           duplo_token: ${{ secrets.DUPLO_TOKEN }}
           tenant: default
-          services: |-
-            [
-              { "Name": "nginx", "Image": "nginx:latest" }
-            ]
+      - name: list-s3
+        run: aws s3 ls
 ```
-
-# License
-
-The scripts and documentation in this project are released under the [MIT License](LICENSE)
