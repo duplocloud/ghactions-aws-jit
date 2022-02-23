@@ -1,0 +1,21 @@
+name: 'DuploCloud AWS JIT'
+description: 'Github action to get just-in-time access to AWS'
+author: 'DuploCloud, Inc.'
+inputs:
+  admin:
+    required: false
+    default: 'false'
+    description: 'Whether or not to get admin credentials'
+  tenant:
+    required: false
+    default: ''
+    description: 'Tenant name or ID, if not getting admin credentials'
+  duplo_host:
+    required: false
+    description: 'Base URL of the Duplo installation (no trailing slash) - defaults to duplo_host env var'
+  duplo_token:
+    required: false
+    description: 'API token - defaults to duplo_token env var'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
