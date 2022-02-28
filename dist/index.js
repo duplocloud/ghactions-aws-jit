@@ -25,10 +25,12 @@ class DataSource {
         return this.getTenantByName(idOrName);
     }
     getTenantById(id) {
-        return this.getTenantsForUser().pipe((0, operators_1.map)(list => list.find(tenant => tenant.TenantId === id)));
+        id = id.toLowerCase();
+        return this.getTenantsForUser().pipe((0, operators_1.map)(list => list.find(tenant => tenant.TenantId.toLowerCase() === id)));
     }
     getTenantByName(name) {
-        return this.getTenantsForUser().pipe((0, operators_1.map)(list => list.find(tenant => tenant.AccountName === name)));
+        name = name.toLowerCase();
+        return this.getTenantsForUser().pipe((0, operators_1.map)(list => list.find(tenant => tenant.AccountName.toLowerCase() === name)));
     }
     getSystemFeatures() {
         return this.api.get('/v3/features/system').pipe((0, operators_1.map)(item => new model_1.SystemFeatures(item)));
