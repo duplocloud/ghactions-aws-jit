@@ -1,0 +1,39 @@
+name: Start Release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Next version number'
+        required: true
+env:
+  git_user: duplo-bot
+  git_email: joe+github-bot@duplocloud.net
+jobs:
+  start-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: develop                # Always release from develop
+          fetch-depth: 0
+          persist-credentials: false  # Needed so we can push with different credentials.
+                                      # NOTE: Pushing with different credentials allows admins to push protected branches.
+                                      # NOTE: Pushing with different credentials allow workflows to trigger from the push.
+
+      # START THE RELEASE
+      - name: Initialize mandatory git config
+        run: |
+          git config --global user.name $git_user &&
+          git config --global user.email $git_email
+      - name: Use Node.js 14.17.3
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.17.3
+      - name: Start gitflow release
+        uses: duplocloud/ghactions-start-gitflow-release@master
+        with:
+          github_token: ${{ secrets.RELEASE_BOT_GITHUB_TOKEN }}
+          version: ${{ github.event.inputs.version }}
+          precommit_run: |
+            npm version --no-git-tag-version ${{ github.event.inputs.version }}
