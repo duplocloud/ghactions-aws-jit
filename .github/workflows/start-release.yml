@@ -3,8 +3,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Next version number'
-        required: true
+        description: 'Override Version'
+        required: false
+        default: '' # default to current version
 env:
   git_user: duplo-bot
   git_email: joe+github-bot@duplocloud.net
@@ -21,19 +22,35 @@ jobs:
                                       # NOTE: Pushing with different credentials allows admins to push protected branches.
                                       # NOTE: Pushing with different credentials allow workflows to trigger from the push.
 
+      # GET THE RELEASE VERSION
+      - name: Get release version
+        id: version
+        run: |
+          # Fail on errors
+          set -euo pipefail
+
+          # Use the current version if it is not being overridden
+          if [ -z "${{ github.event.inputs.version }}" ]; then
+            echo "::set-output name=release::$(jq -r .version <package.json)"
+
+          # Otherwise, the use the overridden version.
+          else
+            echo "::set-output name=release::${{ github.event.inputs.version }}"
+          fi
+
       # START THE RELEASE
       - name: Initialize mandatory git config
         run: |
           git config --global user.name $git_user &&
           git config --global user.email $git_email
-      - name: Use Node.js 14.17.3
+      - name: Use Node.js 16.14.0
         uses: actions/setup-node@v1
         with:
-          node-version: 14.17.3
+          node-version: 16.14.0
       - name: Start gitflow release
-        uses: duplocloud/ghactions-start-gitflow-release@master
+        uses: duplocloud/ghactions-start-gitflow-release@develeop
         with:
           github_token: ${{ secrets.RELEASE_BOT_GITHUB_TOKEN }}
-          version: ${{ github.event.inputs.version }}
+          version: "${{ steps.version.outputs.release }}"
           precommit_run: |
-            npm version --no-git-tag-version ${{ github.event.inputs.version }}
+            [ -z "${{ github.event.inputs.version }}" ] || npm version --no-git-tag-version "${{ steps.version.outputs.release }}"
