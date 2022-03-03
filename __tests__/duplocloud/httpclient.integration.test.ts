@@ -1,5 +1,5 @@
-import {DuploHttpClient} from '../src/duplocloud/httpclient'
-import {expect, test} from '@jest/globals'
+import {DuploHttpClient} from '../../src/duplocloud/httpclient'
+import {expect} from '@jest/globals'
 
 
 describe('DuploHttpClient integration', () => {

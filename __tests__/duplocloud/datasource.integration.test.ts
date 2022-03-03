@@ -1,7 +1,7 @@
 import {expect, test} from '@jest/globals'
 
-import {DataSource} from '../src/duplocloud/datasource'
-import {DuploHttpClient} from '../src/duplocloud/httpclient'
+import {DataSource} from '../../src/duplocloud/datasource'
+import {DuploHttpClient} from '../../src/duplocloud/httpclient'
 
 describe('DataSource integration', () => {
 

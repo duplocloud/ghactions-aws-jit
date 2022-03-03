@@ -1,9 +1,8 @@
-import {beforeEach, expect, jest, test} from '@jest/globals'
+import {expect, jest} from '@jest/globals'
 import { EMPTY } from 'rxjs'
 
-import {DataSource} from '../src/duplocloud/datasource'
-import {DuploHttpClient} from '../src/duplocloud/httpclient'
-import { AwsJitCredentials } from '../src/duplocloud/model'
+import {DataSource} from '../../src/duplocloud/datasource'
+import {DuploHttpClient} from '../../src/duplocloud/httpclient'
 
 //jest.mock('../../src/duplocloud/httpclient')
 
