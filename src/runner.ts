@@ -8,6 +8,7 @@ import {DuploHttpClient} from './duplocloud/httpclient'
 export class Runner {
   static readonly ERROR_AWS_CLOUD_NOT_SUPPORTED = 'AWS cloud is not supported on this Duplo instance'
   static readonly ERROR_NO_TENANT_SPECIFIED = 'No tenant specified, and admin credentials were not requested'
+  static readonly ERROR_FAILED_TO_GET_CREDS = 'Failed to get AWS JIT credentials'
 
   async runAction(): Promise<void> {
     try {
@@ -44,7 +45,7 @@ export class Runner {
       return apiCall
         .pipe(
           catchError(err => {
-            core.setFailed(`Failed to get AWS JIT credentials: ${JSON.stringify(err)}`)
+            core.setFailed(`${Runner.ERROR_FAILED_TO_GET_CREDS}: ${JSON.stringify(err)}`)
             return EMPTY
           }),
           map(creds => {
