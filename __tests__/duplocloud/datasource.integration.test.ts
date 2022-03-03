@@ -4,15 +4,12 @@ import {DataSource} from '../../src/duplocloud/datasource'
 import {DuploHttpClient} from '../../src/duplocloud/httpclient'
 
 describe('DataSource integration', () => {
-
   // Integration tests.
   const tenantId = process.env.duplo_tenant_id
-  if (!tenantId || ! process.env.duplo_token) {
+  if (!tenantId || !process.env.duplo_token) {
     console.log('Skipping integration tests: duplo_token and/or duplo_tenant_id env var missing or empty')
-    it('is skipped', () => { })
-  }
-
-  else {
+    it('is skipped', () => {})
+  } else {
     const ds = new DataSource(new DuploHttpClient())
 
     describe('getTenantsForUser', () => {
@@ -37,7 +34,6 @@ describe('DataSource integration', () => {
     })
 
     describe('getTenant', () => {
-
       it('converts uppercase name', async () => {
         const result = await ds.getTenant('DEFAULT').toPromise()
         expect(result).not.toBeNull()

@@ -4,18 +4,19 @@ import {Runner} from '../src/runner'
 import * as core from '@actions/core'
 import {DataSource} from '../src/duplocloud/datasource'
 import {DuploHttpClient} from '../src/duplocloud/httpclient'
-import { of, throwError } from 'rxjs'
-import { AwsJitCredentials, SystemFeatures, UserTenant } from '../src/duplocloud/model'
+import {of, throwError} from 'rxjs'
+import {AwsJitCredentials, SystemFeatures, UserTenant} from '../src/duplocloud/model'
 
 jest.mock('@actions/core')
 
 describe('Runner unit', () => {
-  const origEnv = { duplo_host: process.env.duplo_host, duplo_token: process.env.duplo_token }
+  const origEnv = {duplo_host: process.env.duplo_host, duplo_token: process.env.duplo_token}
 
-  const featureFaker = () => new SystemFeatures({
-    IsAwsCloudEnabled: true,
-    DefaultAwsAccount: 'FAKE_AWS_ACCOUNT'
-  })
+  const featureFaker = () =>
+    new SystemFeatures({
+      IsAwsCloudEnabled: true,
+      DefaultAwsAccount: 'FAKE_AWS_ACCOUNT'
+    })
 
   let runner = new Runner()
 
@@ -30,7 +31,7 @@ describe('Runner unit', () => {
   })
 
   describe('initialization', () => {
-    let mockDuploHttpClient_doFetch : any
+    let mockDuploHttpClient_doFetch: any
 
     beforeEach(() => {
       mockDuploHttpClient_doFetch = jest
@@ -59,8 +60,7 @@ describe('Runner unit', () => {
 
       await runner.runAction()
 
-      expect(mockDuploHttpClient_doFetch).
-        toHaveBeenCalledWith('/v3/features/system', 'GET', null, undefined)
+      expect(mockDuploHttpClient_doFetch).toHaveBeenCalledWith('/v3/features/system', 'GET', null, undefined)
       expect(core.setFailed).toHaveBeenCalledWith(Runner.ERROR_AWS_CLOUD_NOT_SUPPORTED)
     })
 
@@ -143,13 +143,14 @@ describe('Runner unit', () => {
     })
 
     describe('on success', () => {
-      const responseFaker = () => new AwsJitCredentials({
-        ConsoleUrl: 'FAKE_CONSOLE_URL',
-        AccessKeyId: 'FAKE_ACCESS_KEY_ID',
-        SecretAccessKey: 'FAKE_SECRET_ACCESS_KEY',
-        Region: 'FAKE_REGION',
-        SessionToken: 'FAKE_SESSION_TOKEN'
-      })
+      const responseFaker = () =>
+        new AwsJitCredentials({
+          ConsoleUrl: 'FAKE_CONSOLE_URL',
+          AccessKeyId: 'FAKE_ACCESS_KEY_ID',
+          SecretAccessKey: 'FAKE_SECRET_ACCESS_KEY',
+          Region: 'FAKE_REGION',
+          SessionToken: 'FAKE_SESSION_TOKEN'
+        })
 
       beforeEach(() => {
         // Mock admin AWS JIT being returned
@@ -175,7 +176,7 @@ describe('Runner unit', () => {
 
       // Mock tenant being returneed
       jest.spyOn(DataSource.prototype, 'getTenantsForUser').mockImplementation(() => {
-        return of([ new UserTenant({TenantId: 'FAKE_TENANT_ID', AccountName: 'fake'}) ])
+        return of([new UserTenant({TenantId: 'FAKE_TENANT_ID', AccountName: 'fake'})])
       })
     })
 
@@ -191,13 +192,14 @@ describe('Runner unit', () => {
     })
 
     describe('on success', () => {
-      const responseFaker = () => new AwsJitCredentials({
+      const responseFaker = () =>
+        new AwsJitCredentials({
           ConsoleUrl: 'FAKE_CONSOLE_URL',
           AccessKeyId: 'FAKE_ACCESS_KEY_ID',
           SecretAccessKey: 'FAKE_SECRET_ACCESS_KEY',
           Region: 'FAKE_REGION',
           SessionToken: 'FAKE_SESSION_TOKEN'
-      })
+        })
 
       beforeEach(() => {
         // Mock tenant AWS JIT being returned
