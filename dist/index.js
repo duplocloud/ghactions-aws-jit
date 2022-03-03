@@ -179,7 +179,24 @@ exports.AwsJitCredentials = AwsJitCredentials;
 
 /***/ }),
 
-/***/ 3109:
+/***/ 6265:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __nccwpck_require__) => {
+
+"use strict";
+
+if (!globalThis.fetch) {
+    const fetch = __nccwpck_require__(467);
+    globalThis.fetch = fetch;
+    globalThis.FormData = fetch.FormData;
+    globalThis.Headers = fetch.Headers;
+    globalThis.Request = fetch.Request;
+    globalThis.Response = fetch.Response;
+}
+
+
+/***/ }),
+
+/***/ 8209:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -213,92 +230,81 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Runner = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const rxjs_1 = __nccwpck_require__(5805);
 const operators_1 = __nccwpck_require__(7801);
 const datasource_1 = __nccwpck_require__(8835);
 const httpclient_1 = __nccwpck_require__(6840);
-function run() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            // Connect to Duplo.
-            const duploHost = core.getInput('duplo_host');
-            const duploToken = core.getInput('duplo_token');
-            const ds = new datasource_1.DataSource(new httpclient_1.DuploHttpClient(duploHost, duploToken));
-            // Confirm that AWS is enabled in this Duplo.
-            const features = yield ds.getSystemFeatures().toPromise();
-            if (!features.IsAwsCloudEnabled) {
-                throw new Error('AWS cloud is not supported on this Duplo instance');
+class Runner {
+    runAction() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // Connect to Duplo.
+                const duploHost = core.getInput('duplo_host');
+                const duploToken = core.getInput('duplo_token');
+                const ds = new datasource_1.DataSource(new httpclient_1.DuploHttpClient(duploHost, duploToken));
+                // Confirm that AWS is enabled in this Duplo.
+                const features = yield ds.getSystemFeatures().toPromise();
+                if (!features.IsAwsCloudEnabled) {
+                    throw new Error(Runner.ERROR_AWS_CLOUD_NOT_SUPPORTED);
+                }
+                // Determine how to retrieve credentials.
+                const isAdmin = core.getBooleanInput('admin');
+                const tenantInput = core.getInput('tenant');
+                let apiCall;
+                if (isAdmin) {
+                    apiCall = ds.getAdminAwsJitCredentials();
+                }
+                else if (tenantInput === null || tenantInput === void 0 ? void 0 : tenantInput.length) {
+                    // Get information about the tenant
+                    if (!(tenantInput === null || tenantInput === void 0 ? void 0 : tenantInput.length))
+                        throw new Error(Runner.ERROR_NO_TENANT_SPECIFIED);
+                    const tenant = yield ds.getTenant(tenantInput).toPromise();
+                    if (!tenant)
+                        throw new Error(`No such tenant: ${tenantInput}`);
+                    // Get tenant level credentials.
+                    apiCall = ds.getTenantAwsJitCredentials(tenant.TenantId);
+                }
+                else {
+                    throw new Error(Runner.ERROR_NO_TENANT_SPECIFIED);
+                }
+                // Retrieve the credentials.
+                return apiCall
+                    .pipe((0, operators_1.catchError)(err => {
+                    core.setFailed(`${Runner.ERROR_FAILED_TO_GET_CREDS}: ${JSON.stringify(err)}`);
+                    return rxjs_1.EMPTY;
+                }), (0, operators_1.map)(creds => {
+                    core.info('Retrieved AWS JIT credentials');
+                    // Output the account ID
+                    core.setOutput('aws-account-id', features.DefaultAwsAccount);
+                    // Mark all secrets so they don't show up in github logs
+                    core.setSecret(creds.AccessKeyId);
+                    core.setSecret(creds.SecretAccessKey);
+                    core.setSecret(creds.ConsoleUrl);
+                    if (creds.SessionToken)
+                        core.setSecret(creds.SessionToken);
+                    // Export all env variables used for AWS credentials
+                    core.exportVariable('AWS_DEFAULT_REGION', creds.Region);
+                    core.exportVariable('AWS_REGION', creds.Region);
+                    core.exportVariable('AWS_ACCESS_KEY_ID', creds.AccessKeyId);
+                    core.exportVariable('AWS_SECRET_ACCESS_KEY', creds.SecretAccessKey);
+                    if (creds.SessionToken)
+                        core.exportVariable('AWS_SESSION_TOKEN', creds.SessionToken);
+                }))
+                    .toPromise();
             }
-            // Determine how to retrieve credentials.
-            const isAdmin = core.getBooleanInput('admin');
-            const tenantInput = core.getInput('tenant');
-            let apiCall;
-            if (isAdmin) {
-                apiCall = ds.getAdminAwsJitCredentials();
+            catch (error) {
+                if (error instanceof Error)
+                    core.setFailed(error.message);
             }
-            else if (tenantInput === null || tenantInput === void 0 ? void 0 : tenantInput.length) {
-                // Get information about the tenant
-                if (!(tenantInput === null || tenantInput === void 0 ? void 0 : tenantInput.length))
-                    throw new Error('No tenant specified, and admin credentials were not requested');
-                const tenant = yield ds.getTenant(tenantInput).toPromise();
-                if (!tenant)
-                    throw new Error(`No such tenant: ${tenantInput}`);
-                // Get tenant level credentials.
-                apiCall = ds.getTenantAwsJitCredentials(tenant.TenantId);
-            }
-            else {
-                throw new Error('No tenant specified, and admin credentials were not requested');
-            }
-            // Retrieve the credentials.
-            return apiCall
-                .pipe((0, operators_1.catchError)(err => {
-                core.setFailed(`Failed to get AWS JIT credentials: ${JSON.stringify(err)}`);
-                return rxjs_1.EMPTY;
-            }), (0, operators_1.map)(creds => {
-                core.info('Retrieved AWS JIT credentials');
-                // Output the account ID
-                core.setOutput('aws-account-id', features.DefaultAwsAccount);
-                // Mark all secrets so they don't show up in github logs
-                core.setSecret(creds.AccessKeyId);
-                core.setSecret(creds.SecretAccessKey);
-                core.setSecret(creds.ConsoleUrl);
-                if (creds.SessionToken)
-                    core.setSecret(creds.SessionToken);
-                // Export all env variables used for AWS credentials
-                core.exportVariable('AWS_DEFAULT_REGION', creds.Region);
-                core.exportVariable('AWS_REGION', creds.Region);
-                core.exportVariable('AWS_ACCESS_KEY_ID', creds.AccessKeyId);
-                core.exportVariable('AWS_SECRET_ACCESS_KEY', creds.SecretAccessKey);
-                if (creds.SessionToken)
-                    core.exportVariable('AWS_SESSION_TOKEN', creds.SessionToken);
-            }))
-                .toPromise();
-        }
-        catch (error) {
-            if (error instanceof Error)
-                core.setFailed(error.message);
-        }
-    });
+        });
+    }
 }
-run();
-
-
-/***/ }),
-
-/***/ 6265:
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __nccwpck_require__) => {
-
-"use strict";
-
-if (!globalThis.fetch) {
-    const fetch = __nccwpck_require__(467);
-    globalThis.fetch = fetch;
-    globalThis.FormData = fetch.FormData;
-    globalThis.Headers = fetch.Headers;
-    globalThis.Request = fetch.Request;
-    globalThis.Response = fetch.Response;
-}
+exports.Runner = Runner;
+Runner.ERROR_AWS_CLOUD_NOT_SUPPORTED = 'AWS cloud is not supported on this Duplo instance';
+Runner.ERROR_NO_TENANT_SPECIFIED = 'No tenant specified, and admin credentials were not requested';
+Runner.ERROR_FAILED_TO_GET_CREDS = 'Failed to get AWS JIT credentials';
 
 
 /***/ }),
@@ -17583,13 +17589,19 @@ module.exports = require("zlib");
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __nccwpck_require__(3109);
-/******/ 	module.exports = __webpack_exports__;
-/******/ 	
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
+"use strict";
+var exports = __webpack_exports__;
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const runner_1 = __nccwpck_require__(8209);
+new runner_1.Runner().runAction();
+
+})();
+
+module.exports = __webpack_exports__;
 /******/ })()
 ;
 //# sourceMappingURL=index.js.map
