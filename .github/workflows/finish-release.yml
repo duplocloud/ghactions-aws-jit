@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3.1.0
         with:
           ref: master                 # Always finish releases from the "merged to" master
           fetch-depth: 0
@@ -41,7 +41,7 @@ jobs:
       - finish-release
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3.1.0
         with:
           fetch-depth: 0
           persist-credentials: false  # Needed so we can push with different credentials.
@@ -54,7 +54,7 @@ jobs:
           git config --global user.name $git_user &&
           git config --global user.email $git_email
       - name: Use Node.js 16.x
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16.x
       - name: Version bump
