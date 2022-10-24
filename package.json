@@ -1,6 +1,6 @@
 {
   "name": "ghactions-aws-jit",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "private": true,
   "description": "Github action to get just-in-time access to AWS",
   "main": "lib/main.js",
