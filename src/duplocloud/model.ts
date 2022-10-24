@@ -43,18 +43,18 @@ export class SystemFeatures {
     Object.assign(this, properties || {})
   }
 
-  IsSignupEnabled: boolean = false
-  IsComplianceEnabled: boolean = false
-  IsSiemEnabled: boolean = false
-  IsBillingEnabled: boolean = false
-  IsKatkitEnabled: boolean = false
-  IsAwsCloudEnabled: boolean = true
+  IsSignupEnabled = false
+  IsComplianceEnabled = false
+  IsSiemEnabled = false
+  IsBillingEnabled = false
+  IsKatkitEnabled = false
+  IsAwsCloudEnabled = true
   AwsRegions: string[] = []
   DefaultAwsAccount: string | undefined
   DefaultAwsRegion: string | undefined
-  IsAzureCloudEnabled: boolean = false
+  IsAzureCloudEnabled = false
   AzureRegions: string[] = []
-  IsGoogleCloudEnabled: boolean = false
+  IsGoogleCloudEnabled = false
   GoogleRegions: string[] = []
 }
 

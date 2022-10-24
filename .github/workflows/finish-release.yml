@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3.1.0
         with:
           ref: master                 # Always finish releases from the "merged to" master
           fetch-depth: 0
@@ -31,6 +31,8 @@ jobs:
         id: finish-release
         uses: duplocloud/ghactions-finish-gitflow-release@master
         with:
+          validate_merge: false
+          delete_ref: false
           github_token: ${{ secrets.RELEASE_BOT_GITHUB_TOKEN }}
 
   version-bump:
@@ -39,8 +41,11 @@ jobs:
       - finish-release
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3.1.0
         with:
+          fetch-depth: 0
+          persist-credentials: false  # Needed so we can push with different credentials.
+                                      # NOTE: Pushing with different credentials allows admins to push protected branches.
           ref: develop
 
       # BUMP THE DEVELOPMENT VERSION
@@ -49,10 +54,15 @@ jobs:
           git config --global user.name $git_user &&
           git config --global user.email $git_email
       - name: Use Node.js 16.x
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16.x
       - name: Version bump
         run: |
           npm version patch --no-git-tag-version &&
-          git push
+          git commit -m 'version bump' package*.json
+      - name: Push develop
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.RELEASE_BOT_GITHUB_TOKEN }}
+          branch: develop
