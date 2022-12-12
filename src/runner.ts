@@ -29,7 +29,6 @@ export class Runner {
       let apiCall: Observable<AwsJitCredentials>
       if (isAdmin) {
         const awsRegion = core.getInput('aws_region')
-        core.info(`Got Region ${awsRegion}`)
         apiCall = ds.getAdminAwsJitCredentials(awsRegion)
       } else if (tenantInput?.length) {
         // Get information about the tenant
