@@ -2,6 +2,7 @@ import {AwsJitCredentials, SystemFeatures, UserTenant} from './model'
 import {DuploHttpClient} from './httpclient'
 import {Observable} from 'rxjs'
 import {map} from 'rxjs/operators'
+import * as core from '@actions/core'
 
 export class DataSource {
   constructor(private api: DuploHttpClient) {}
@@ -33,7 +34,7 @@ export class DataSource {
 
   getAdminAwsJitCredentials(awsRegion: string): Observable<AwsJitCredentials> {
     const api = awsRegion ? `/v3/admin/aws/jitAccess/admin/${awsRegion}` : '/adminproxy/GetJITAwsConsoleAccessUrl'
-
+    core.info(`Going to use api ${api}`)
     return this.api.get<AwsJitCredentials>(api).pipe(map(item => new AwsJitCredentials(item)))
   }
 
