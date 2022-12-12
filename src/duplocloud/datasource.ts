@@ -31,10 +31,10 @@ export class DataSource {
     return this.api.get<SystemFeatures>('/v3/features/system').pipe(map(item => new SystemFeatures(item)))
   }
 
-  getAdminAwsJitCredentials(): Observable<AwsJitCredentials> {
-    return this.api
-      .get<AwsJitCredentials>('/adminproxy/GetJITAwsConsoleAccessUrl')
-      .pipe(map(item => new AwsJitCredentials(item)))
+  getAdminAwsJitCredentials(awsRegion: string): Observable<AwsJitCredentials> {
+    const api = awsRegion ? `/v3/admin/aws/jitAccess/admin/${awsRegion}` : '/adminproxy/GetJITAwsConsoleAccessUrl'
+
+    return this.api.get<AwsJitCredentials>(api).pipe(map(item => new AwsJitCredentials(item)))
   }
 
   getTenantAwsJitCredentials(tenantId: string): Observable<AwsJitCredentials> {

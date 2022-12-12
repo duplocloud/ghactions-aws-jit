@@ -35,9 +35,10 @@ class DataSource {
     getSystemFeatures() {
         return this.api.get('/v3/features/system').pipe((0, operators_1.map)(item => new model_1.SystemFeatures(item)));
     }
-    getAdminAwsJitCredentials() {
+    getAdminAwsJitCredentials(awsRegion) {
+        const api = awsRegion ? `/v3/admin/aws/jitAccess/admin/${awsRegion}` : '/adminproxy/GetJITAwsConsoleAccessUrl';
         return this.api
-            .get('/adminproxy/GetJITAwsConsoleAccessUrl')
+            .get(api)
             .pipe((0, operators_1.map)(item => new model_1.AwsJitCredentials(item)));
     }
     getTenantAwsJitCredentials(tenantId) {
@@ -254,12 +255,11 @@ class Runner {
                 const tenantInput = core.getInput('tenant');
                 let apiCall;
                 if (isAdmin) {
-                    apiCall = ds.getAdminAwsJitCredentials();
+                    const awsRegion = core.getInput('aws_region');
+                    apiCall = ds.getAdminAwsJitCredentials(awsRegion);
                 }
                 else if (tenantInput === null || tenantInput === void 0 ? void 0 : tenantInput.length) {
                     // Get information about the tenant
-                    if (!(tenantInput === null || tenantInput === void 0 ? void 0 : tenantInput.length))
-                        throw new Error(Runner.ERROR_NO_TENANT_SPECIFIED);
                     const tenant = yield ds.getTenant(tenantInput).toPromise();
                     if (!tenant)
                         throw new Error(`No such tenant: ${tenantInput}`);
