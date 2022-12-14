@@ -36,10 +36,11 @@ class DataSource {
         return this.api.get('/v3/features/system').pipe((0, operators_1.map)(item => new model_1.SystemFeatures(item)));
     }
     getAdminAwsJitCredentials(awsRegion) {
-        const api = awsRegion ? `/v3/admin/aws/jitAccess/admin/${awsRegion}` : '/adminproxy/GetJITAwsConsoleAccessUrl';
-        return this.api
-            .get(api)
-            .pipe((0, operators_1.map)(item => new model_1.AwsJitCredentials(item)));
+        let api = "/v3/admin/aws/jitAccess/admin";
+        if (awsRegion) {
+            api = `${api}/${awsRegion}`;
+        }
+        return this.api.get(api).pipe((0, operators_1.map)(item => new model_1.AwsJitCredentials(item)));
     }
     getTenantAwsJitCredentials(tenantId) {
         return this.api

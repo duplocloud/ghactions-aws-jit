@@ -32,7 +32,11 @@ export class DataSource {
   }
 
   getAdminAwsJitCredentials(awsRegion: string): Observable<AwsJitCredentials> {
-    const api = awsRegion ? `/v3/admin/aws/jitAccess/admin/${awsRegion}` : '/adminproxy/GetJITAwsConsoleAccessUrl'
+    let api = '/v3/admin/aws/jitAccess/admin'
+
+    if (awsRegion) {
+      api = `${api}/${awsRegion}`
+    }
 
     return this.api.get<AwsJitCredentials>(api).pipe(map(item => new AwsJitCredentials(item)))
   }
