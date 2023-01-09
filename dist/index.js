@@ -36,7 +36,7 @@ class DataSource {
         return this.api.get('/v3/features/system').pipe((0, operators_1.map)(item => new model_1.SystemFeatures(item)));
     }
     getAdminAwsJitCredentials(awsRegion) {
-        let api = "/v3/admin/aws/jitAccess/admin";
+        let api = '/v3/admin/aws/jitAccess/admin';
         if (awsRegion) {
             api = `${api}/${awsRegion}`;
         }
