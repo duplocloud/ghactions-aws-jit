@@ -16,6 +16,9 @@ inputs:
   duplo_token:
     required: false
     description: 'API token - defaults to duplo_token env var'
+  aws_region:
+    required: false
+    description: 'Used only when admin is true. Credentails will be generated in the aws region that is set'
 runs:
   using: 'node16'
   main: 'dist/index.js'

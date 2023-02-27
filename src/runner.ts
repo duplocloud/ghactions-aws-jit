@@ -28,10 +28,10 @@ export class Runner {
       const tenantInput = core.getInput('tenant')
       let apiCall: Observable<AwsJitCredentials>
       if (isAdmin) {
-        apiCall = ds.getAdminAwsJitCredentials()
+        const awsRegion = core.getInput('aws_region')
+        apiCall = ds.getAdminAwsJitCredentials(awsRegion)
       } else if (tenantInput?.length) {
         // Get information about the tenant
-        if (!tenantInput?.length) throw new Error(Runner.ERROR_NO_TENANT_SPECIFIED)
         const tenant = await ds.getTenant(tenantInput).toPromise()
         if (!tenant) throw new Error(`No such tenant: ${tenantInput}`)
 
