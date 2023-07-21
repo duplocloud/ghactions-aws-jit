@@ -6,6 +6,7 @@ import {DuploHttpClient} from '../../src/duplocloud/httpclient'
 describe('DataSource integration', () => {
   // Integration tests.
   const tenantId = process.env.duplo_tenant_id
+  const duploHost = process.env.duplo_host
   if (!tenantId || !process.env.duplo_token) {
     console.log('Skipping integration tests: duplo_token and/or duplo_tenant_id env var missing or empty')
     it('is skipped', () => {})
@@ -15,6 +16,9 @@ describe('DataSource integration', () => {
     // create a var to hold then tenant ID
     var tId = tenantId.toUpperCase()
     console.log(tId)
+
+    var h = duploHost?.toUpperCase()
+    console.log(h)
 
     describe('getTenantsForUser', () => {
       it('lists tenants accessible to the user', async () => {
