@@ -54,9 +54,13 @@ export class DuploHttpClient {
     else if (body) init.body = JSON.stringify(body)
 
     return fromFetch(input, init).pipe(
-      switchMap(response => {
-        if (response.ok) return response.json()
-        return throwError(response.body)
+      switchMap(async response => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          const errorMessage = await response.text()
+          throw new Error(errorMessage)
+        }
       })
     )
   }
