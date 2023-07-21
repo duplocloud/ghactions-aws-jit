@@ -55,13 +55,18 @@ describe('DataSource integration', () => {
 
     describe('getTenantAwsJitCredentials', () => {
       it('can get AWS JIT creds for tenant', async () => {
-        const result = await ds.getTenantAwsJitCredentials(tenantId).toPromise()
-        expect(result).not.toBeNull()
-        expect(result.Region).not.toBeNull()
-        expect(result.AccessKeyId).not.toBeNull()
-        expect(result.SecretAccessKey).not.toBeNull()
-        expect(result.SessionToken).not.toBeNull()
-      })
+        try {
+          const result = await ds.getTenantAwsJitCredentials(tenantId).toPromise()
+          expect(result).not.toBeNull()
+          expect(result.Region).not.toBeNull()
+          expect(result.AccessKeyId).not.toBeNull()
+          expect(result.SecretAccessKey).not.toBeNull()
+          expect(result.SessionToken).not.toBeNull()
+        } catch (err) {
+          console.error(err)
+          throw err
+        }
+      }) 
     })
   }
 })
