@@ -1,6 +1,6 @@
 {
   "name": "ghactions-aws-jit",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "private": true,
   "description": "Github action to get just-in-time access to AWS",
   "main": "lib/main.js",
@@ -36,7 +36,7 @@
     "@types/jest": "^27.4.1",
     "@types/node": "^16.10.5",
     "@typescript-eslint/parser": "^5.8.1",
-    "@vercel/ncc": "^0.31.1",
+    "@vercel/ncc": "^0.36.1",
     "babel-jest": "^29.4.3",
     "eslint": "^8.26.0",
     "eslint-plugin-github": "^4.4.0",
