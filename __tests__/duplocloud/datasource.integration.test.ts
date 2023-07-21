@@ -8,7 +8,9 @@ describe('DataSource integration', () => {
   const tenantId = process.env.duplo_tenant_id
   const tenantName = process.env.duplo_tenant_name
   if (!tenantId || !tenantName || !process.env.duplo_token) {
-    console.log('Skipping integration tests: duplo_token and/or duplo_tenant_id and/or duplo_tenant_name env var missing or empty')
+    console.log(
+      'Skipping integration tests: duplo_token and/or duplo_tenant_id and/or duplo_tenant_name env var missing or empty'
+    )
     it('is skipped', () => {})
   } else {
     const ds = new DataSource(new DuploHttpClient())
