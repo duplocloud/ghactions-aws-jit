@@ -1,6 +1,6 @@
 import '../polyfill/fetch'
 
-import {Observable, throwError} from 'rxjs'
+import {Observable} from 'rxjs'
 import {fromFetch} from 'rxjs/fetch'
 import {switchMap} from 'rxjs/operators'
 
