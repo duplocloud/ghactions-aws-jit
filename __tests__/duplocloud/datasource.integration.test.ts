@@ -12,6 +12,8 @@ describe('DataSource integration', () => {
   } else {
     const ds = new DataSource(new DuploHttpClient())
 
+    console.log(tenantId)
+
     describe('getTenantsForUser', () => {
       it('lists tenants accessible to the user', async () => {
         const result = await ds.getTenantsForUser().toPromise()
