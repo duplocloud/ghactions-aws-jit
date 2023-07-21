@@ -2,7 +2,7 @@ name: Test
 on:
   push:
 env:
-  duplo_host: htps://prod.duplocloud.net
+  duplo_host: https://prod.duplocloud.net
   duplo_tenant_id: 4b5f6dd7-c95b-4ab7-b6c6-10883941ad30
   duplo_tenant_name: gha-tests
   # user:   github-duplo-bot
