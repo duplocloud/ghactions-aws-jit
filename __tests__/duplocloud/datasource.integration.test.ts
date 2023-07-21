@@ -12,7 +12,9 @@ describe('DataSource integration', () => {
   } else {
     const ds = new DataSource(new DuploHttpClient())
 
-    console.log(tenantId)
+    // create a var to hold then tenant ID
+    var tId = tenantId.toUpperCase()
+    console.log(tId)
 
     describe('getTenantsForUser', () => {
       it('lists tenants accessible to the user', async () => {
