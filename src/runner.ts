@@ -9,6 +9,8 @@ export class Runner {
   static readonly ERROR_AWS_CLOUD_NOT_SUPPORTED = 'AWS cloud is not supported on this Duplo instance'
   static readonly ERROR_NO_TENANT_SPECIFIED = 'No tenant specified, and admin credentials were not requested'
   static readonly ERROR_FAILED_TO_GET_CREDS = 'Failed to get AWS JIT credentials'
+  static readonly ERROR_FAILED_TO_GET_AWS_FEATURES = 'Failed to get AWS system features'
+  static readonly ERROR_AN_UNKNOWN_ERROR_OCCURRED = 'An unknown error occurred'
 
   async runAction(): Promise<void> {
     try {
@@ -21,8 +23,8 @@ export class Runner {
       const features = await ds
         .getSystemFeatures()
         .pipe(
-          catchError(error => {
-            core.setFailed(`Failed to get system features: ${JSON.stringify(error)}`)
+          catchError(err => {
+            core.setFailed(`${Runner.ERROR_FAILED_TO_GET_AWS_FEATURES}: ${JSON.stringify(err)}`)
             return EMPTY
           })
         )
@@ -82,7 +84,7 @@ export class Runner {
       if (error instanceof Error) {
         core.setFailed(error.message)
       } else {
-        core.setFailed(`An unknown error occurred: ${JSON.stringify(error)}`)
+        core.setFailed(`${Runner.ERROR_AN_UNKNOWN_ERROR_OCCURRED}: ${JSON.stringify(error)}`)
       }
     }
   }
