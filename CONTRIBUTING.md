@@ -89,3 +89,28 @@ or
 ```shell
 npm test
 ```
+
+## Pushing changes
+
+To push changes to the repository, create a branch and push your changes to that branch. Then create a pull request to merge your branch into `develop`.
+
+### Building and packaging
+
+Build and package the code before opening a pull request. This will ensure that the code is packaged correctly and your changes are reflected in the action.
+
+
+```shell
+npm run build and npm run package
+```
+
+## Publishing
+
+To publish the action to the marketplace, run the following the `Start Release` workflow from the Actions tab in github. This will create a new release and publish the action to the marketplace.
+
+### Versioning
+
+The version of the action is defined in the `package.json` file. The version is automatically incremented when the `Start Release` workflow is run. The version is incremented based on the type of change that is being released. For example, if the last release was `v1.0.0` and the next release is a bug fix, the version will be `v1.0.1`. 
+
+If the next release is a feature, you'll need to provide a new version by bumping the minor version. Example: `v1.2.0`.
+If the next release is a breaking change, you'll need to bump the major version. Example: `v2.0.0`.
+
