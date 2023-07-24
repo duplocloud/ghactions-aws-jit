@@ -49,7 +49,7 @@ class DataSource {
     }
 }
 exports.DataSource = DataSource;
-
+//# sourceMappingURL=datasource.js.map
 
 /***/ }),
 
@@ -102,14 +102,17 @@ class DuploHttpClient {
         else if (body)
             init.body = JSON.stringify(body);
         return (0, fetch_1.fromFetch)(input, init).pipe((0, operators_1.switchMap)(response => {
-            if (response.ok)
+            if (response.ok) {
                 return response.json();
-            return (0, rxjs_1.throwError)(response.body);
+            }
+            else {
+                return (0, rxjs_1.from)(response.json()).pipe((0, operators_1.mergeMap)(errorBody => (0, rxjs_1.throwError)(Object.assign({ statusCode: response.status }, errorBody))));
+            }
         }));
     }
 }
 exports.DuploHttpClient = DuploHttpClient;
-
+//# sourceMappingURL=httpclient.js.map
 
 /***/ }),
 
@@ -177,7 +180,7 @@ class AwsJitCredentials {
     }
 }
 exports.AwsJitCredentials = AwsJitCredentials;
-
+//# sourceMappingURL=model.js.map
 
 /***/ }),
 
@@ -194,7 +197,7 @@ if (!globalThis.fetch) {
     globalThis.Request = fetch.Request;
     globalThis.Response = fetch.Response;
 }
-
+//# sourceMappingURL=fetch.js.map
 
 /***/ }),
 
@@ -247,7 +250,13 @@ class Runner {
                 const duploToken = core.getInput('duplo_token');
                 const ds = new datasource_1.DataSource(new httpclient_1.DuploHttpClient(duploHost, duploToken));
                 // Confirm that AWS is enabled in this Duplo.
-                const features = yield ds.getSystemFeatures().toPromise();
+                const features = yield ds
+                    .getSystemFeatures()
+                    .pipe((0, operators_1.catchError)((err) => {
+                    core.setFailed(`${Runner.ERROR_FAILED_TO_GET_AWS_FEATURES}: ${JSON.stringify(err)}`);
+                    return rxjs_1.EMPTY;
+                }))
+                    .toPromise();
                 if (!features.IsAwsCloudEnabled) {
                     throw new Error(Runner.ERROR_AWS_CLOUD_NOT_SUPPORTED);
                 }
@@ -272,10 +281,10 @@ class Runner {
                 }
                 // Retrieve the credentials.
                 return apiCall
-                    .pipe((0, operators_1.catchError)(err => {
+                    .pipe((0, operators_1.catchError)((err) => {
                     core.setFailed(`${Runner.ERROR_FAILED_TO_GET_CREDS}: ${JSON.stringify(err)}`);
                     return rxjs_1.EMPTY;
-                }), (0, operators_1.map)(creds => {
+                }), (0, operators_1.map)((creds) => {
                     core.info('Retrieved AWS JIT credentials');
                     // Output the account ID
                     core.setOutput('aws-account-id', features.DefaultAwsAccount);
@@ -296,8 +305,12 @@ class Runner {
                     .toPromise();
             }
             catch (error) {
-                if (error instanceof Error)
+                if (error instanceof Error) {
                     core.setFailed(error.message);
+                }
+                else {
+                    core.setFailed(`${Runner.ERROR_AN_UNKNOWN_ERROR_OCCURRED}: ${JSON.stringify(error)}`);
+                }
             }
         });
     }
@@ -306,7 +319,9 @@ exports.Runner = Runner;
 Runner.ERROR_AWS_CLOUD_NOT_SUPPORTED = 'AWS cloud is not supported on this Duplo instance';
 Runner.ERROR_NO_TENANT_SPECIFIED = 'No tenant specified, and admin credentials were not requested';
 Runner.ERROR_FAILED_TO_GET_CREDS = 'Failed to get AWS JIT credentials';
-
+Runner.ERROR_FAILED_TO_GET_AWS_FEATURES = 'Failed to get AWS system features';
+Runner.ERROR_AN_UNKNOWN_ERROR_OCCURRED = 'An unknown error occurred';
+//# sourceMappingURL=runner.js.map
 
 /***/ }),
 
@@ -18740,7 +18755,7 @@ var exports = __webpack_exports__;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const runner_1 = __nccwpck_require__(8209);
 new runner_1.Runner().runAction();
-
+//# sourceMappingURL=main.js.map
 })();
 
 module.exports = __webpack_exports__;
