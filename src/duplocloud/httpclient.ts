@@ -56,7 +56,7 @@ export class DuploHttpClient {
     return fromFetch(input, init).pipe(
       switchMap(response => {
         if (response.ok) {
-          return from(response.json())
+          return response.json()
         } else {
           return from(response.json()).pipe(
             mergeMap(errorBody => throwError({statusCode: response.status, ...errorBody}))
