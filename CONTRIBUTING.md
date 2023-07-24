@@ -79,12 +79,6 @@ And this command to run the action:
 node lib/main.js
 ```
 
-## Debugging
-
-
-
-This should allow you to set breakpoints and step through your code in the debugger
-
 ## Running tests
 
 Run tests locally by running either of these two commands on your terminal:
