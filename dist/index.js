@@ -252,7 +252,7 @@ class Runner {
                 // Confirm that AWS is enabled in this Duplo.
                 const features = yield ds
                     .getSystemFeatures()
-                    .pipe((0, operators_1.catchError)(err => {
+                    .pipe((0, operators_1.catchError)((err) => {
                     core.setFailed(`${Runner.ERROR_FAILED_TO_GET_AWS_FEATURES}: ${JSON.stringify(err)}`);
                     return rxjs_1.EMPTY;
                 }))
@@ -281,10 +281,10 @@ class Runner {
                 }
                 // Retrieve the credentials.
                 return apiCall
-                    .pipe((0, operators_1.catchError)(err => {
+                    .pipe((0, operators_1.catchError)((err) => {
                     core.setFailed(`${Runner.ERROR_FAILED_TO_GET_CREDS}: ${JSON.stringify(err)}`);
                     return rxjs_1.EMPTY;
-                }), (0, operators_1.map)(creds => {
+                }), (0, operators_1.map)((creds) => {
                     core.info('Retrieved AWS JIT credentials');
                     // Output the account ID
                     core.setOutput('aws-account-id', features.DefaultAwsAccount);

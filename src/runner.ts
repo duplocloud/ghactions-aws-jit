@@ -23,7 +23,7 @@ export class Runner {
       const features = await ds
         .getSystemFeatures()
         .pipe(
-          catchError(err => {
+          catchError((err: Error) => {
             core.setFailed(`${Runner.ERROR_FAILED_TO_GET_AWS_FEATURES}: ${JSON.stringify(err)}`)
             return EMPTY
           })
@@ -55,11 +55,11 @@ export class Runner {
       // Retrieve the credentials.
       return apiCall
         .pipe(
-          catchError(err => {
+          catchError((err: Error) => {
             core.setFailed(`${Runner.ERROR_FAILED_TO_GET_CREDS}: ${JSON.stringify(err)}`)
             return EMPTY
           }),
-          map(creds => {
+          map((creds: AwsJitCredentials) => {
             core.info('Retrieved AWS JIT credentials')
 
             // Output the account ID
