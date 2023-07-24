@@ -18,7 +18,16 @@ export class Runner {
       const ds = new DataSource(new DuploHttpClient(duploHost, duploToken))
 
       // Confirm that AWS is enabled in this Duplo.
-      const features = await ds.getSystemFeatures().toPromise()
+      const features = await ds
+        .getSystemFeatures()
+        .pipe(
+          catchError(error => {
+            core.setFailed(`Failed to get system features: ${JSON.stringify(error)}`)
+            return EMPTY
+          })
+        )
+        .toPromise()
+
       if (!features.IsAwsCloudEnabled) {
         throw new Error(Runner.ERROR_AWS_CLOUD_NOT_SUPPORTED)
       }
@@ -70,7 +79,11 @@ export class Runner {
         )
         .toPromise<void>()
     } catch (error) {
-      if (error instanceof Error) core.setFailed(error.message)
+      if (error instanceof Error) {
+        core.setFailed(error.message)
+      } else {
+        core.setFailed(`An unknown error occurred: ${JSON.stringify(error)}`)
+      }
     }
   }
 }

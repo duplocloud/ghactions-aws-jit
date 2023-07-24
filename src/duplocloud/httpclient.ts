@@ -1,8 +1,8 @@
 import '../polyfill/fetch'
 
-import {Observable, throwError} from 'rxjs'
+import {from, Observable, throwError} from 'rxjs'
 import {fromFetch} from 'rxjs/fetch'
-import {switchMap} from 'rxjs/operators'
+import {mergeMap, switchMap} from 'rxjs/operators'
 
 export type HttpHeaders = {[header: string]: string}
 
@@ -55,8 +55,13 @@ export class DuploHttpClient {
 
     return fromFetch(input, init).pipe(
       switchMap(response => {
-        if (response.ok) return response.json()
-        return throwError(response.body)
+        if (response.ok) {
+          return from(response.json())
+        } else {
+          return from(response.json()).pipe(
+            mergeMap(errorBody => throwError({statusCode: response.status, ...errorBody}))
+          )
+        }
       })
     )
   }
