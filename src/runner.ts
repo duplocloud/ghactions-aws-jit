@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
 import {EMPTY, Observable} from 'rxjs'
 import {catchError, map} from 'rxjs/operators'
-import {AwsJitCredentials} from './duplocloud/model'
+import {AwsJitCredentials, SystemFeatures} from './duplocloud/model'
 import {DataSource} from './duplocloud/datasource'
 import {DuploHttpClient} from './duplocloud/httpclient'
 
@@ -20,16 +20,12 @@ export class Runner {
       const ds = new DataSource(new DuploHttpClient(duploHost, duploToken))
 
       // Confirm that AWS is enabled in this Duplo.
-      const features = await ds
-        .getSystemFeatures()
-        .pipe(
-          catchError((err: Error) => {
-            core.setFailed(`${Runner.ERROR_FAILED_TO_GET_AWS_FEATURES}: ${JSON.stringify(err)}`)
-            return EMPTY
-          })
-        )
-        .toPromise()
-
+      let features: SystemFeatures
+      try {
+        features = await ds.getSystemFeatures().toPromise()
+      } catch (err) {
+        throw new Error(`${Runner.ERROR_FAILED_TO_GET_AWS_FEATURES}: ${JSON.stringify(err)}`)
+      }
       if (!features.IsAwsCloudEnabled) {
         throw new Error(Runner.ERROR_AWS_CLOUD_NOT_SUPPORTED)
       }

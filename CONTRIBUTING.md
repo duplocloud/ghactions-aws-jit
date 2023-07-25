@@ -100,12 +100,25 @@ Build and package the code before opening a pull request. This will ensure that 
 
 
 ```shell
-npm run build and npm run package
+# Install dependencies
+npm ci
+# Rebuild the dist/ directory
+npm run build
+npm run package
+```
+
+Note: If you encounter permission issues while running the above commands, try running them with `sudo` or modify permissions to the `dist` directory.
+
+```shell
+sudo chmod -R a+w dist/
 ```
 
 ## Publishing
 
-To publish the action to the marketplace, run the following the `Start Release` workflow from the Actions tab in github. This will create a new release and publish the action to the marketplace.
+To publish the action to the marketplace, 
+1. Run the `Start Release` workflow from the Actions tab in github. This will create a new release and publish the action `(release/x.x.x)` to the marketplace.
+2. You can then test the action by creating a new workflow that uses the action. Reference the release branch in the workflow file. Example: `uses: duplocloud/ghactions-aws-jit@release/0.3.3`
+3. Once you are satisfied with the changes, you can merge the release branch into `master`. This will publish the action to the marketplace. Example: `uses: duplocloud/ghactions-aws-jit@master`
 
 ### Versioning
 
