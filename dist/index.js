@@ -250,13 +250,13 @@ class Runner {
                 const duploToken = core.getInput('duplo_token');
                 const ds = new datasource_1.DataSource(new httpclient_1.DuploHttpClient(duploHost, duploToken));
                 // Confirm that AWS is enabled in this Duplo.
-                const features = yield ds
-                    .getSystemFeatures()
-                    .pipe((0, operators_1.catchError)((err) => {
-                    core.setFailed(`${Runner.ERROR_FAILED_TO_GET_AWS_FEATURES}: ${JSON.stringify(err)}`);
-                    return rxjs_1.EMPTY;
-                }))
-                    .toPromise();
+                let features;
+                try {
+                    features = yield ds.getSystemFeatures().toPromise();
+                }
+                catch (err) {
+                    throw new Error(`${Runner.ERROR_FAILED_TO_GET_AWS_FEATURES}: ${JSON.stringify(err)}`);
+                }
                 if (!features.IsAwsCloudEnabled) {
                     throw new Error(Runner.ERROR_AWS_CLOUD_NOT_SUPPORTED);
                 }
