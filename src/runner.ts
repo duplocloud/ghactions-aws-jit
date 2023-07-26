@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
 import {EMPTY, Observable} from 'rxjs'
 import {catchError, map} from 'rxjs/operators'
-import {AwsJitCredentials} from './duplocloud/model'
+import {AwsJitCredentials, SystemFeatures} from './duplocloud/model'
 import {DataSource} from './duplocloud/datasource'
 import {DuploHttpClient} from './duplocloud/httpclient'
 
@@ -9,6 +9,8 @@ export class Runner {
   static readonly ERROR_AWS_CLOUD_NOT_SUPPORTED = 'AWS cloud is not supported on this Duplo instance'
   static readonly ERROR_NO_TENANT_SPECIFIED = 'No tenant specified, and admin credentials were not requested'
   static readonly ERROR_FAILED_TO_GET_CREDS = 'Failed to get AWS JIT credentials'
+  static readonly ERROR_FAILED_TO_GET_AWS_FEATURES = 'Failed to get AWS system features'
+  static readonly ERROR_AN_UNKNOWN_ERROR_OCCURRED = 'An unknown error occurred'
 
   async runAction(): Promise<void> {
     try {
@@ -18,7 +20,12 @@ export class Runner {
       const ds = new DataSource(new DuploHttpClient(duploHost, duploToken))
 
       // Confirm that AWS is enabled in this Duplo.
-      const features = await ds.getSystemFeatures().toPromise()
+      let features: SystemFeatures
+      try {
+        features = await ds.getSystemFeatures().toPromise()
+      } catch (err) {
+        throw new Error(`${Runner.ERROR_FAILED_TO_GET_AWS_FEATURES}: ${JSON.stringify(err)}`)
+      }
       if (!features.IsAwsCloudEnabled) {
         throw new Error(Runner.ERROR_AWS_CLOUD_NOT_SUPPORTED)
       }
@@ -44,11 +51,11 @@ export class Runner {
       // Retrieve the credentials.
       return apiCall
         .pipe(
-          catchError(err => {
+          catchError((err: Error) => {
             core.setFailed(`${Runner.ERROR_FAILED_TO_GET_CREDS}: ${JSON.stringify(err)}`)
             return EMPTY
           }),
-          map(creds => {
+          map((creds: AwsJitCredentials) => {
             core.info('Retrieved AWS JIT credentials')
 
             // Output the account ID
@@ -70,7 +77,11 @@ export class Runner {
         )
         .toPromise<void>()
     } catch (error) {
-      if (error instanceof Error) core.setFailed(error.message)
+      if (error instanceof Error) {
+        core.setFailed(error.message)
+      } else {
+        core.setFailed(`${Runner.ERROR_AN_UNKNOWN_ERROR_OCCURRED}: ${JSON.stringify(error)}`)
+      }
     }
   }
 }
