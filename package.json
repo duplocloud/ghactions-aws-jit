@@ -30,7 +30,7 @@
     "rxjs": "^6.6.3"
   },
   "devDependencies": {
-    "@babel/plugin-transform-modules-commonjs": "^7.21.2",
+    "@babel/plugin-transform-modules-commonjs": "^7.22.5",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-typescript": "^7.16.7",
     "@types/jest": "^27.4.1",
