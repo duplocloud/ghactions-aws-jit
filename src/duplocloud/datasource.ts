@@ -9,7 +9,7 @@ export class DataSource {
   getTenantsForUser(): Observable<UserTenant[]> {
     return this.api
       .get<UserTenant[]>('/admin/GetTenantsForUser')
-      .pipe(map(list => list.map(item => new UserTenant(item))))
+      .pipe(map((list: Array<Partial<UserTenant>>)  => list.map(item => new UserTenant(item))))
   }
 
   getTenant(idOrName: string): Observable<UserTenant | undefined> {
@@ -28,7 +28,7 @@ export class DataSource {
   }
 
   getSystemFeatures(): Observable<SystemFeatures> {
-    return this.api.get<SystemFeatures>('/v3/features/system').pipe(map(item => new SystemFeatures(item)))
+    return this.api.get<SystemFeatures>('/v3/features/system').pipe(map((item: Partial<SystemFeatures>) => new SystemFeatures(item)))
   }
 
   getAdminAwsJitCredentials(awsRegion: string): Observable<AwsJitCredentials> {
@@ -38,12 +38,12 @@ export class DataSource {
       api = `${api}/${awsRegion}`
     }
 
-    return this.api.get<AwsJitCredentials>(api).pipe(map(item => new AwsJitCredentials(item)))
+    return this.api.get<AwsJitCredentials>(api).pipe(map((item: Partial<AwsJitCredentials>) => new AwsJitCredentials(item)))
   }
 
   getTenantAwsJitCredentials(tenantId: string): Observable<AwsJitCredentials> {
     return this.api
       .get<AwsJitCredentials>(`/subscriptions/${tenantId}/GetAwsConsoleTokenUrl`)
-      .pipe(map(item => new AwsJitCredentials(item)))
+      .pipe(map((item: Partial<AwsJitCredentials>) => new AwsJitCredentials(item)))
   }
 }
