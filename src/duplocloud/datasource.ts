@@ -9,7 +9,7 @@ export class DataSource {
   getTenantsForUser(): Observable<UserTenant[]> {
     return this.api
       .get<UserTenant[]>('/admin/GetTenantsForUser')
-      .pipe(map((list: Array<Partial<UserTenant>>)  => list.map(item => new UserTenant(item))))
+      .pipe(map((list: Partial<UserTenant>[])  => list.map(item => new UserTenant(item))))
   }
 
   getTenant(idOrName: string): Observable<UserTenant | undefined> {
