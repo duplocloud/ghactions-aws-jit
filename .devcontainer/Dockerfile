@@ -1,5 +1,5 @@
 # Dockerfile
-FROM node:16
+FROM node:20
 
 # Install git, process tools
 RUN apt-get update && apt-get -y install git procps
