@@ -42,7 +42,6 @@ export class DuploHttpClient {
     return this.doFetch(path, 'DELETE', null, options)
   }
 
-  // eslint-disable-next-line @typescript-eslint/promise-function-async
   private doFetch<T>(
     path: string,
     method: string,
