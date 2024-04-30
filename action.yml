@@ -20,5 +20,5 @@ inputs:
     required: false
     description: 'Used only when admin is true. Credentails will be generated in the aws region that is set'
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
