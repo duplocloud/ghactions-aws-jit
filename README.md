@@ -1,3 +1,7 @@
+# Deprecation Warning
+This is no longer actively maintained. 
+Migrate to this action: [duplocloud/actions/setup](https://github.com/duplocloud/actions/tree/main/setup)
+
 <p align="center">
   <a href="https://github.com/duplocloud/ghactions-aws-jit/actions"><img alt="ghactions-aws-jit status" src="https://github.com/duplocloud/ghactions-aws-jit/workflows/build-test/badge.svg"></a>
 </p>
